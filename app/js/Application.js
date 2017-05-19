@@ -1,7 +1,7 @@
 class Application {
     init() {
         this.angle = 90;
-        this.distance = 4;
+        this.distance = 0.6;
         this.width = 1;
         this.iterations = 4;
         this.axiom = 'X';
@@ -26,6 +26,8 @@ class Application {
         var edges = t.createEdges(this.iterations);
         this.mesh = new THREE.LineSegments(new THREE.Geometry(), this.material);
         this.mesh.geometry.vertices = edges;
+        this.mesh.geometry.computeBoundingBox();
+        this.mesh.position.set(-this.mesh.geometry.boundingBox.getCenter().x, -this.mesh.geometry.boundingBox.getCenter().y, 0);
 
         // this.mesh = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 32), this.material);
         // this.mesh.position.set(0, 0, 3);

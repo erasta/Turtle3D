@@ -27,7 +27,7 @@ class SceneManager {
 
         // CAMERA
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 3000);
-        this.camera.position.set(0, -30, 5);
+        this.camera.position.set(0, -30, 6);
         this.scene.add(this.camera);
         this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
         THREEx.WindowResize(this.renderer, this.camera);
@@ -66,6 +66,7 @@ class SceneManager {
         // stats.begin();
         this.renderer.render(this.scene, this.camera);
         // stats.end();
+        // console.log(this.camera.position);
         requestAnimationFrame(this.animate);
     }
 
