@@ -50,6 +50,19 @@ Turtle.prototype.createEdges = function(iterations) {
     return edges;
 };
 
+Turtle.prototype.createSequances = function(iterations) {
+    var ret = [];
+    this.go(iterations, (pos, next, width) => {
+        let last;
+        if (ret.length > 0 && ret[ret.length-1][ret[ret.length-1].length-1].equals(pos)) {
+            ret[ret.length-1].push(next.clone());
+        } else {
+            ret.push([pos.clone(), next.clone()]);
+        }
+    });
+    return ret;
+};
+
 Turtle.prototype.go = function(iterations, callbackForEdge) {
     function findStartsWith(arr, text) {
         for (var i = 0; i < arr.length; ++i) {
