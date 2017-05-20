@@ -31,9 +31,10 @@ class Turtle {
         this.pos = position || new THREE.Vector3(0, 0, 0);
         this.dir = (direction || new THREE.Vector3(0, 0, 1)).normalize();
         this.up = (up || new THREE.Vector3(0, 1, 0)).normalize();
+        this.right = new THREE.Vector3();
         if (this.up.equals(this.dir)) {
-            var right = new THREE.Vector3(0, 1, 0).cross(this.dir);
-            this.up = right.cross(this.dir).normalize();
+            this.right.set(0, 1, 0).cross(this.dir);
+            this.up = this.right.cross(this.dir).normalize();
         }
         this.rules = [];
         this.axiom = '';
@@ -67,42 +68,20 @@ class Turtle {
     }
 
     go(iterations, callbackForEdge) {
-        function findStartsWith(arr, text) {
-            for (var i = 0; i < arr.length; ++i) {
-                if (arr[i].startsWith(text)) return i;
-            }
-            return undefined;
-        }
-
-        var rotateright = new THREE.Vector3(),
-            right = new THREE.Vector3(),
-            next = new THREE.Vector3();
-
-        function rotate(dir, up, degrees, out) {
-            var angle = degrees * Math.PI / 180.0
-            var sin = Math.sin(angle),
-                cos = Math.cos(angle);
-            var factor3 = (1 - cos) * up.dot(dir);
-            rotateright.crossVectors(up, dir).normalize();
-            out = out || new THREE.Vector3();
-            out.x = dir.x * cos + rotateright.x * sin + up.x * factor3;
-            out.y = dir.y * cos + rotateright.y * sin + up.y * factor3;
-            out.z = dir.z * cos + rotateright.z * sin + up.z * factor3;
-            return out;
-        }
+        var next = new THREE.Vector3();
 
         function pitch(angle) {
-            right.crossVectors(that.up, that.dir).normalize();
-            rotate(that.dir, right, angle, that.dir);
-            rotate(that.up, right, angle, that.up);
+            that.right.crossVectors(that.up, that.dir).normalize();
+            that.dir.applyAxisAngle(that.right, angle * Math.PI / 180.0);
+            that.up.applyAxisAngle(that.right, angle * Math.PI / 180.0);
         }
 
         function turn(angle) {
-            rotate(that.dir, that.up, angle, that.dir);
+            that.dir.applyAxisAngle(that.up, angle * Math.PI / 180.0);
         }
 
         function roll(angle) {
-            rotate(that.up, that.dir, angle, that.up);
+            that.up.applyAxisAngle(that.dir, angle * Math.PI / 180.0);
         }
 
         var that = this;
