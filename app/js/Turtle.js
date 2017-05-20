@@ -67,27 +67,25 @@ class Turtle {
         return ret;
     }
 
+    pitch(angle) {
+        this.right.crossVectors(this.up, this.dir).normalize();
+        this.dir.applyAxisAngle(this.right, angle * Math.PI / 180.0);
+        this.up.applyAxisAngle(this.right, angle * Math.PI / 180.0);
+    }
+
+    turn(angle) {
+        this.dir.applyAxisAngle(this.up, angle * Math.PI / 180.0);
+    }
+
+    roll(angle) {
+        this.up.applyAxisAngle(this.dir, angle * Math.PI / 180.0);
+    }
+
     go(iterations, callbackForEdge) {
-        var next = new THREE.Vector3();
-
-        function pitch(angle) {
-            that.right.crossVectors(that.up, that.dir).normalize();
-            that.dir.applyAxisAngle(that.right, angle * Math.PI / 180.0);
-            that.up.applyAxisAngle(that.right, angle * Math.PI / 180.0);
-        }
-
-        function turn(angle) {
-            that.dir.applyAxisAngle(that.up, angle * Math.PI / 180.0);
-        }
-
-        function roll(angle) {
-            that.up.applyAxisAngle(that.dir, angle * Math.PI / 180.0);
-        }
-
-        var that = this;
         var verbose = false;
         var locationStack = [],
             programStack = [];
+        var next = new THREE.Vector3();
         //numeric.seedrandom.seedrandom(1337);
 
         // parsing rules
@@ -131,17 +129,17 @@ class Turtle {
             if (c === 'V') {
                 verbose = true;
             } else if (c === '+') {
-                turn(params.length ? params[0] : this.angle);
+                this.turn(params.length ? params[0] : this.angle);
             } else if (c === '-') {
-                turn(-(params.length ? params[0] : this.angle));
+                this.turn(-(params.length ? params[0] : this.angle));
             } else if (c === '<') {
-                roll(params.length ? params[0] : this.angle);
+                this.roll(params.length ? params[0] : this.angle);
             } else if (c === '>') {
-                roll(-(params.length ? params[0] : this.angle));
+                this.roll(-(params.length ? params[0] : this.angle));
             } else if (c === '^') {
-                pitch(params.length ? params[0] : this.angle);
+                this.pitch(params.length ? params[0] : this.angle);
             } else if (c === '&') {
-                pitch(-(params.length ? params[0] : this.angle));
+                this.pitch(-(params.length ? params[0] : this.angle));
             } else if (c === '[') {
                 locationStack.push({ pos: this.pos.clone(), dir: this.dir.clone(), up: this.up.clone() });
             } else if (c === ']') {
