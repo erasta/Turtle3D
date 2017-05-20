@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Turtle logic
  *
@@ -155,7 +157,7 @@ Turtle.prototype.go = function(iterations, callbackForEdge) {
         } else if (c === '&') {
             pitch(-(params.length ? params[0] : this.angle));
         } else if (c === '[') {
-            locationStack.push({pos: this.pos.slice(), dir: this.dir.slice(), up: this.up.slice()});
+            locationStack.push({pos: this.pos.clone(), dir: this.dir.clone(), up: this.up.clone()});
         } else if (c === ']') {
             var location = locationStack.pop();
             this.pos = location.pos;

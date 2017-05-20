@@ -2,17 +2,10 @@
 
 class Application {
     init() {
-        this.angle = 90;
-        this.distance = 0.6;
-        this.width = 0;
-        this.iterations = 4;
-        this.axiom = 'X';
-        this.rule1 = 'X=^<XF^<XFX-F^>>XFX&F+>>XFX-F>X->';
-        this.rule2 = '';
-        this.rule3 = '';
-        this.rule4 = '';
-        this.rule5 = '';
-
+        this.preset = 'Hilbert3D';
+        this.createPresets();
+        this.changeByPreset = this.changeByPreset.bind(this);
+        this.changeByPreset();
         this.initGui();
         this.materialLine = new THREE.LineBasicMaterial({ color: 'red' });
         this.materialMesh = new THREE.MeshLambertMaterial({ color: 'red' });
@@ -22,7 +15,7 @@ class Application {
 
     applyGuiChanges() {
         this.sceneManager.scene.remove(this.mesh);
-        var t = new Turtle(this.angle, this.distance, this.width, new THREE.Vector3(0, 0, 0), new THREE.Vector3(0,0,1));
+        var t = new Turtle(this.angle, this.distance, this.width, new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 1));
         var rules = [this.rule1, this.rule2, this.rule3, this.rule4, this.rule5];
         rules = rules.filter((r) => r && r.length > 0);
         t.rule(this.axiom, rules);
@@ -34,7 +27,7 @@ class Application {
             t.createSequances(this.iterations).forEach(s => {
                 let path = new THREE.CurvePath();
                 for (let i = 1; i < s.length; ++i) {
-                    path.curves.push(new THREE.LineCurve3(s[i-1], s[i]));
+                    path.curves.push(new THREE.LineCurve3(s[i - 1], s[i]));
                 }
                 let tube = new THREE.TubeGeometry(path, s.length * 4, this.width, 6, false);
                 this.mesh.geometry.merge(tube);
@@ -46,9 +39,22 @@ class Application {
         this.sceneManager.scene.add(this.mesh);
     }
 
+    changeByPreset() {
+        this.presets.forEach((p) => {
+            if (p.preset == this.preset) {
+                _.extend(this, p);
+            }
+        });
+        if (this.gui) {
+            this.gui.__controllers.forEach((c) => c.updateDisplay())
+            this.applyGuiChanges();
+        };
+    }
+
     initGui() {
         this.applyGuiChanges = this.applyGuiChanges.bind(this);
         this.gui = new dat.GUI({ autoPlace: true, width: 500 });
+        this.gui.add(this, 'preset', this.presets.map(p => p.preset)).onChange(this.changeByPreset);
         this.gui.add(this, 'angle').step(0.001).min(0).max(360).onChange(this.applyGuiChanges);
         this.gui.add(this, 'distance').step(0.001).min(0.01).max(100).onChange(this.applyGuiChanges);
         this.gui.add(this, 'width').step(0.001).min(0).max(5).onChange(this.applyGuiChanges);
@@ -59,5 +65,18 @@ class Application {
         this.gui.add(this, 'rule3').onChange(this.applyGuiChanges);
         this.gui.add(this, 'rule4').onChange(this.applyGuiChanges);
         this.gui.add(this, 'rule5').onChange(this.applyGuiChanges);
+    }
+
+    createPresets() {
+        this.presets = [
+            { preset: 'Hilbert3D', angle: 90, distance: 0.6, width: 0, iterations: 4, axiom: 'X', rule1: 'X=^<XF^<XFX-F^>>XFX&F+>>XFX-F>X->', rule2: '', rule3: '', rule4: '', rule5: '' },
+            { preset: 'Seaweed', angle: 22, distance: 0.3, width: 0, iterations: 4, axiom: 'G', rule1: 'G=GFGF-[&GF^GF^GF]+[^GF&GF&GF]>[^f^f&f]', rule2: '', rule3: '', rule4: '', rule5: '' },
+            { preset: 'Pythagoras tree', angle: 45, distance: 0.1, width: 0, iterations: 6, axiom: '0', rule1: '0=1F[+0F]-0F', rule2: '1=1F1F', rule3: '', rule4: '', rule5: '' },
+            { preset: 'Pythagoras tree twisted', angle: 45, distance: 0.1, width: 0, iterations: 6, axiom: '0', rule1: '0=1F[+0F]-0F', rule2: '1=1F<1F', rule3: '', rule4: '', rule5: '' },
+            { preset: 'Pythagoras tree variant', angle: 45, distance: 1, width: 0, iterations: 6, axiom: '0', rule1: '0=1F[+0F]-0F', rule2: '1=1F^1F', rule3: '', rule4: '', rule5: '' },
+            { preset: 'Fractal plant', angle: 25, distance: 0.1, width: 0, iterations: 5, axiom: 'YX', rule1: 'Y=YF<(45)YF-[-YF+YF]+[+YF-YF]', rule2: 'X=YfYf+[+YF]+[-YF]', rule3: '', rule4: '', rule5: '' },
+            { preset: 'Dragon curve', angle: 90, distance: 0.1, width: 0, iterations: 10, axiom: 'YX', rule1: 'X=XF+YF', rule2: 'Y=FX-YF', rule3: '', rule4: '', rule5: '' },
+            { preset: 'Sierpinski triangle', angle: 60, distance: 0.1, width: 0, iterations: 6, axiom: '^(90)A', rule1: 'A=BF-AF-BF', rule2: 'B=AF+BF+AF', rule3: '', rule4: '', rule5: '' },
+        ];
     }
 }
