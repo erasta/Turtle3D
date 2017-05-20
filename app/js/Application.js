@@ -29,7 +29,7 @@ class Application {
                 for (let i = 1; i < s.length; ++i) {
                     path.curves.push(new THREE.LineCurve3(s[i - 1], s[i]));
                 }
-                let tube = new THREE.TubeGeometry(path, s.length * 4, this.width, 6, false);
+                let tube = new THREE.TubeGeometry(path, s.length * 4, this.width, 6, true);
                 this.mesh.geometry.merge(tube);
             });
         }
