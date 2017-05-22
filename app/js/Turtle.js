@@ -46,27 +46,6 @@ class Turtle {
         return this;
     }
 
-    createEdges(iterations) {
-        var edges = [];
-        this.go(iterations, (pos, next, width) => {
-            edges.push(pos.clone(), next.clone());
-        });
-        return edges;
-    }
-
-    createSequances(iterations) {
-        var ret = [];
-        this.go(iterations, (pos, next, width) => {
-            let last;
-            if (ret.length > 0 && ret[ret.length - 1][ret[ret.length - 1].length - 1].equals(pos)) {
-                ret[ret.length - 1].push(next.clone());
-            } else {
-                ret.push([pos.clone(), next.clone()]);
-            }
-        });
-        return ret;
-    }
-
     pitch(angle) {
         this.right.crossVectors(this.up, this.dir).normalize();
         this.dir.applyAxisAngle(this.right, angle * Math.PI / 180.0);
@@ -81,12 +60,13 @@ class Turtle {
         this.up.applyAxisAngle(this.dir, angle * Math.PI / 180.0);
     }
 
-    go(iterations, callbackForEdge) {
+    go(iterations) {
         var verbose = false;
         var locationStack = [],
             programStack = [];
         var next = new THREE.Vector3();
         //numeric.seedrandom.seedrandom(1337);
+        var edges = [];
 
         // parsing rules
         var ruleMap = {};
@@ -149,7 +129,7 @@ class Turtle {
                 this.up = location.up;
             } else if (c === 'F') {
                 next.copy(this.pos).addScaledVector(this.dir, params.length ? params[0] : this.distance);
-                callbackForEdge(this.pos, next, this.width);
+                edges.push(this.pos.clone(), next.clone());
                 this.pos.copy(next);
             } else if (c === 'f') {
                 this.pos.copy(this.pos).addScaledVector(this.dir, params.length ? params[0] : this.distance);
@@ -173,6 +153,7 @@ class Turtle {
                 }
             }
         }
+        return edges;
     }
 }
 

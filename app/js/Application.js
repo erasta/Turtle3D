@@ -7,7 +7,7 @@ class Application {
         this.changeByPreset = this.changeByPreset.bind(this);
         this.changeByPreset();
         this.initGui();
-        this.materialLine = new THREE.LineBasicMaterial({ color: 'red' });
+        this.materialLine = new THREE.LineBasicMaterial({ color: 'red', linewidth:1 });
         this.materialMesh = new THREE.MeshLambertMaterial({ color: 'red' });
 
         this.applyGuiChanges();
@@ -19,20 +19,21 @@ class Application {
         var rules = [this.rule1, this.rule2, this.rule3, this.rule4, this.rule5];
         rules = rules.filter((r) => r && r.length > 0);
         t.rule(this.axiom, rules);
-        if (this.width === 0) {
+        // if (this.width === 0) {
             this.mesh = new THREE.LineSegments(new THREE.Geometry(), this.materialLine);
-            this.mesh.geometry.vertices = t.createEdges(this.iterations);
-        } else {
-            this.mesh = new THREE.Mesh(new THREE.Geometry(), this.materialMesh);
-            t.createSequances(this.iterations).forEach(s => {
-                let path = new THREE.CurvePath();
-                for (let i = 1; i < s.length; ++i) {
-                    path.curves.push(new THREE.LineCurve3(s[i - 1], s[i]));
-                }
-                let tube = new THREE.TubeGeometry(path, s.length * 4, this.width, 6, true);
-                this.mesh.geometry.merge(tube);
-            });
-        }
+            this.mesh.geometry.vertices = t.go(this.iterations);
+            this.materialLine.linewidth = this.width;
+        // } else {
+        //     this.mesh = new THREE.Mesh(new THREE.Geometry(), this.materialMesh);
+        //     t.createSequances(this.iterations).forEach(s => {
+        //         let path = new THREE.CurvePath();
+        //         for (let i = 1; i < s.length; ++i) {
+        //             path.curves.push(new THREE.LineCurve3(s[i - 1], s[i]));
+        //         }
+        //         let tube = new THREE.TubeGeometry(path, s.length * 4, this.width, 6, true);
+        //         this.mesh.geometry.merge(tube);
+        //     });
+        // }
         this.mesh.geometry.computeBoundingBox();
         this.mesh.position.set(-this.mesh.geometry.boundingBox.getCenter().x, -this.mesh.geometry.boundingBox.getCenter().y, 0);
 
