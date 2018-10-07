@@ -7,7 +7,7 @@ class Application {
         this.changeByPreset = this.changeByPreset.bind(this);
         this.changeByPreset();
         this.initGui();
-        this.materialLine = new THREE.LineBasicMaterial({ color: 'red', linewidth:1 });
+        this.materialLine = new THREE.LineBasicMaterial({ color: 'red' });//, linewidth:1 });
         this.materialMesh = new THREE.MeshLambertMaterial({ color: 'red' });
 
         this.applyGuiChanges();
@@ -22,7 +22,7 @@ class Application {
         // if (this.width === 0) {
             this.mesh = new THREE.LineSegments(new THREE.Geometry(), this.materialLine);
             this.mesh.geometry.vertices = t.go(this.iterations);
-            this.materialLine.linewidth = this.width;
+            // this.materialLine.linewidth = this.width;
         // } else {
         //     this.mesh = new THREE.Mesh(new THREE.Geometry(), this.materialMesh);
         //     t.createSequances(this.iterations).forEach(s => {
@@ -58,7 +58,7 @@ class Application {
         this.gui.add(this, 'preset', this.presets.map(p => p.preset)).onChange(this.changeByPreset);
         this.gui.add(this, 'angle').step(0.001).min(0).max(360).onChange(this.applyGuiChanges);
         this.gui.add(this, 'distance').step(0.001).min(0.01).max(100).onChange(this.applyGuiChanges);
-        this.gui.add(this, 'width').step(0.001).min(0).max(5).onChange(this.applyGuiChanges);
+        // this.gui.add(this, 'width').step(0.001).min(0).max(5).onChange(this.applyGuiChanges);
         this.gui.add(this, 'iterations').step(1).min(0).max(20).onChange(this.applyGuiChanges);
         this.gui.add(this, 'axiom').onChange(this.applyGuiChanges);
         this.gui.add(this, 'rule1').onChange(this.applyGuiChanges);

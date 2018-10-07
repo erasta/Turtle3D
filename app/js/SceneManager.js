@@ -7,11 +7,11 @@ class SceneManager {
         this.container = document.getElementById('ThreeJS');
 
         // RENDERER
-        if (Detector.webgl) {
-            this.renderer = new THREE.WebGLRenderer({ antialias: true });
-        } else {
-            this.renderer = new THREE.CanvasRenderer();
-        }
+        // if (Detector.webgl) {
+        this.renderer = new THREE.WebGLRenderer({ antialias: true });
+        // } else {
+        //     this.renderer = new THREE.CanvasRenderer();
+        // }
 
         this.renderer.gammaInput = true;
         this.renderer.gammaOutput = true;
@@ -38,7 +38,7 @@ class SceneManager {
         this.scene.add(new THREE.HemisphereLight(0xffffff, 0x222222));
         var grid = new THREE.GridHelper(50, 50);
         grid.rotation.x = Math.PI / 2;
-        this.scene.add(grid);
+        // this.scene.add(grid);
 
         // Lights
         [
