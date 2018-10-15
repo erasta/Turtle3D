@@ -43,6 +43,7 @@ class Application {
                 if (curr.length == 0 || curr[curr.length - 1].distanceTo(vertices[i]) > 1e-6) {
                     if (curr.length > 0) {
                         vertgroups.push(curr);
+                        curr = [];
                     }
                     curr.push(vertices[i]);
                 }
@@ -50,11 +51,12 @@ class Application {
             }
             if (curr.length > 0) {
                 vertgroups.push(curr);
+                curr = [];
             }
 
             for (var i = 0; i < vertgroups.length; ++i) {
                 var curve = new THREE.CatmullRomCurve3(vertgroups[i]);
-                let tube = new THREE.TubeGeometry(curve, vertgroups[i].length * this.sampling, this.width, 6, false);
+                let tube = new THREE.TubeGeometry(curve, vertgroups[i].length * this.sampling, this.width, this.radialSegments, false);
                 this.mesh.geometry.merge(tube);
             }
 
@@ -122,6 +124,9 @@ class Application {
 
         this.sampling = 3;
         this.gui.add(this, 'sampling').step(1).min(1).max(16).onChange(this.applyGuiChanges);
+
+        this.radialSegments = 3;
+        this.gui.add(this, 'radialSegments').step(1).min(3).max(32).onChange(this.applyGuiChanges);
     }
 
     createPresets() {
