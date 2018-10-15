@@ -8,7 +8,7 @@ class Application {
         this.changeByPreset();
         this.initGui();
         this.materialLine = new THREE.LineBasicMaterial({ color: 'red' });//, linewidth:1 });
-        this.materialMesh = new THREE.MeshStandardMaterial({ color: 'red', side: THREE.DoubleSide });
+        this.materialMesh = new THREE.MeshStandardMaterial({ color: 'green', side: THREE.DoubleSide });
 
         this.applyGuiChanges();
     }
@@ -54,7 +54,7 @@ class Application {
 
             for (var i = 0; i < vertgroups.length; ++i) {
                 var curve = new THREE.CatmullRomCurve3(vertgroups[i]);
-                let tube = new THREE.TubeGeometry(curve, vertgroups[i].length * 6, this.width, 6, false);
+                let tube = new THREE.TubeGeometry(curve, vertgroups[i].length * this.sampling, this.width, 6, false);
                 this.mesh.geometry.merge(tube);
             }
 
@@ -82,7 +82,8 @@ class Application {
             // });
         }
         this.mesh.geometry.computeBoundingBox();
-        this.mesh.position.set(-this.mesh.geometry.boundingBox.getCenter().x, -this.mesh.geometry.boundingBox.getCenter().y, 0);
+        var center = this.mesh.geometry.boundingBox.getCenter(new THREE.Vector3());
+        this.mesh.position.set(-center.x, -center.y, 0);
 
         this.sceneManager.scene.add(this.mesh);
     }
@@ -106,13 +107,21 @@ class Application {
         this.gui.add(this, 'angle').step(0.001).min(0).max(360).onChange(this.applyGuiChanges);
         this.gui.add(this, 'distance').step(0.001).min(0.01).max(100).onChange(this.applyGuiChanges);
         this.gui.add(this, 'width').step(0.001).min(0).max(5).onChange(this.applyGuiChanges);
-        this.gui.add(this, 'iterations').step(1).min(0).max(20).onChange(this.applyGuiChanges);
+        this.gui.add(this, 'iterations').step(1).min(0).max(8).onChange(this.applyGuiChanges);
         this.gui.add(this, 'axiom').onChange(this.applyGuiChanges);
         this.gui.add(this, 'rule1').onChange(this.applyGuiChanges);
         this.gui.add(this, 'rule2').onChange(this.applyGuiChanges);
         this.gui.add(this, 'rule3').onChange(this.applyGuiChanges);
         this.gui.add(this, 'rule4').onChange(this.applyGuiChanges);
         this.gui.add(this, 'rule5').onChange(this.applyGuiChanges);
+
+        this.color = "#00ff00";
+        this.gui.addColor(this, 'color').onChange(() => {
+            this.mesh.material.color = new THREE.Color(this.color);
+        });
+
+        this.sampling = 3;
+        this.gui.add(this, 'sampling').step(1).min(1).max(16).onChange(this.applyGuiChanges);
     }
 
     createPresets() {

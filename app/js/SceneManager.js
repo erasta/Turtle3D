@@ -5,18 +5,9 @@ class SceneManager {
         // SCENE
         this.scene = new THREE.Scene();
         this.container = document.getElementById('ThreeJS');
-
-        // RENDERER
-        // if (Detector.webgl) {
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
-        // } else {
-        //     this.renderer = new THREE.CanvasRenderer();
-        // }
-
         this.renderer.gammaInput = true;
         this.renderer.gammaOutput = true;
-        this.renderer.setFaceCulling(0);
-
         this.renderer.setSize(this.container.offsetWidth, this.container.offsetHeight);
         this.container.appendChild(this.renderer.domElement);
 
