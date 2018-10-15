@@ -27,23 +27,51 @@ class Application {
         } else {
             this.mesh = new THREE.Mesh(new THREE.Geometry(), this.materialMesh);
             let sp = new THREE.SphereGeometry(this.width);
-            for (var i = 0; i < vertices.length; ++i) {
-                sp.translate(vertices[i].x, vertices[i].y, vertices[i].z);
-                this.mesh.geometry.merge(sp);
-                sp.translate(-vertices[i].x, -vertices[i].y, -vertices[i].z);
-            }
+            // for (var i = 0; i < vertices.length; ++i) {
+            //     this.mesh.geometry.merge(sp, new THREE.Matrix4().makeTranslation(vertices[i].x, vertices[i].y, vertices[i].z), 0);
+            // }
             // for (var i = 0; i < vertices.length; i += 2) {
             //     let path = new THREE.CurvePath();
             //     path.curves.push(new THREE.LineCurve3(vertices[i], vertices[i + 1]));
             //     let tube = new THREE.TubeGeometry(path, 10, this.width, 6, false);
             //     this.mesh.geometry.merge(tube);
             // }
+
+            var vertgroups = [];
+            var curr = [];
             for (var i = 0; i < vertices.length; i += 2) {
-                // let path = new THREE.CurvePath();
-                // path.curves.push(new THREE.LineCurve3(vertices[i], vertices[i + 1]));
-                let tube = new THREE.TubeGeometry(new THREE.LineCurve3(vertices[i], vertices[i + 1]), 2, this.width, 6, false);
+                if (curr.length == 0 || curr[curr.length - 1].distanceTo(vertices[i]) > 1e-6) {
+                    if (curr.length > 0) {
+                        vertgroups.push(curr);
+                    }
+                    curr.push(vertices[i]);
+                }
+                curr.push(vertices[i + 1]);
+            }
+            if (curr.length > 0) {
+                vertgroups.push(curr);
+            }
+
+            for (var i = 0; i < vertgroups.length; ++i) {
+                var curve = new THREE.CatmullRomCurve3(vertgroups[i]);
+                let tube = new THREE.TubeGeometry(curve, vertgroups[i].length * 6, this.width, 6, false);
                 this.mesh.geometry.merge(tube);
             }
+
+            // for (var i = 0; i < vertices.length; i += 2) {
+            //     if (vertgroups.length > 0 && vertgroups[vertgroups.length - 1])
+            //         vertgroups.push([vertices[i], vertices[i + 1]]);
+            //     if (v.length > 0 && v[v.length - 1].manhattanDistanceTo(vertices[i]) < 1e-6) {
+            //         v.push(vertices[i + 1]);
+            //     } else {
+            //         this.mesh.geometry.merge(tube);
+
+            //     }
+            //     // let path = new THREE.CurvePath();
+            //     // path.curves.push(new THREE.LineCurve3(vertices[i], vertices[i + 1]));
+            //     let tube = new THREE.TubeGeometry(new THREE.LineCurve3(vertices[i], vertices[i + 1]), 2, this.width, 6, false);
+            //     this.mesh.geometry.merge(tube);
+            // }
             // t.createSequances(this.iterations).forEach(s => {
             //     let path = new THREE.CurvePath();
             //     for (let i = 1; i < s.length; ++i) {
